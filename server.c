@@ -12,6 +12,8 @@
 #define BIG_END 1
 #define LITTLE_END 0
 
+#define DATETIME_SIZE 19
+
 int checkEndian()
 {
 	int i = 1;
@@ -67,17 +69,28 @@ void littleToBigEndianF(float *val)
 
 void littleToBigEndianS(char str[])
 {
-    if(checkEndian() == LITTLE_END)
-    {
+    // if(checkEndian() == LITTLE_END)
+    // {
+        int size = DATETIME_SIZE;
+        int i = 0;
         char *s = str;
         char temp;
         
-        while(*s++ != '\0')
+        
+        for(i; i<(size/2); i++)
         {
-            temp = *s;           
+            temp = s[i];  
+            printf("%c   ",s[i]); 
+            s[i] = s[size - 1 - i];
+            printf("%c\n",s[i]); 
+            s[size - 1 - i] = temp;
         }
-                        
-    }
+        // while(*s++ != '\0')
+        // {
+        //     temp = *s;           
+        // }
+        printf("%s\n",s);                
+    // }
 }
 
 
@@ -85,11 +98,11 @@ char* getCurrentDateTime()
 {
     time_t rawtime;
     struct tm * timeinfo;
-    static char timeStr[26];
+    static char timeStr[DATETIME_SIZE+1];
 
     time ( &rawtime );
     timeinfo = localtime ( &rawtime );
-    strftime(timeStr, 26, "%Y:%m:%d %H:%M:%S", timeinfo);
+    strftime(timeStr, DATETIME_SIZE+1, "%Y:%m:%d %H:%M:%S", timeinfo);
     return timeStr;
 }
 
@@ -163,7 +176,8 @@ int main(int argc , char *argv[])
             char* time;
             time = getCurrentDateTime();
             printf ( "Current local time and date: %s\n", time);
-            write(client_sock , time , sizeof(char)* 26);
+            littleToBigEndianS(time);
+            write(client_sock , time , sizeof(char)* DATETIME_SIZE);
         }
         else
         {

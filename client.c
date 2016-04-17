@@ -6,6 +6,8 @@
  
 #define SQRT_OUT 1000
 #define TIME_OUT 1002 
+
+#define DATETIME_SIZE 19
  
 int main(int argc , char *argv[])
 {
@@ -70,7 +72,7 @@ int main(int argc , char *argv[])
         else if(requestType = TIME_OUT)
         {
             char* time;
-            int size = 26;
+            int size = DATETIME_SIZE;
             time = malloc(sizeof(char)* size);
             if(recv(sock , time , sizeof(char)*size , 0) < 0)
         	{
