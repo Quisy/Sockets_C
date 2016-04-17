@@ -8,6 +8,62 @@
 #define SQRT_IN 1000
 #define TIME_IN 1002
 
+#define BIG_END 1
+#define LITTLE_END 0
+
+int checkEndian()
+{
+	int i = 1;
+	char *d = (char*)&i;
+
+	if(d[0] == 1)
+		return BIG_END;
+	else
+		return LITTLE_END;
+}
+
+void littleToBigEndianI(int *val)
+{
+    if(checkEndian() == LITTLE_END)
+    {
+        int i = 0, k=0;
+        int currentValTemp = *val;
+        char *old = (char*)&currentValTemp;
+        char *new = (char*)val;
+        
+        for(i; i<4; i++)
+        {
+           new[i] = old[3-i]; 
+        }
+        
+        for(k; k<4; k++)
+        {
+           printf("%d  %d\n",(int)new[k],(int)old[k]);
+        }
+    }
+}
+
+void littleToBigEndianF(float *val)
+{
+    if(checkEndian() == LITTLE_END)
+    {
+        int i = 0, k=0;
+        int currentValTemp = *val;
+        char *old = (char*)&currentValTemp;
+        char *new = (char*)val;
+        
+        for(i; i<4; i++)
+        {
+           new[i] = old[3-i]; 
+        }
+        
+        for(k; k<4; k++)
+        {
+           printf("%d  %d\n",(int)new[k],(int)old[k]);
+        }
+    }
+}
+
 int main(int argc , char *argv[])
 {
     int socket_desc , client_sock , c , read_size;
@@ -56,13 +112,15 @@ int main(int argc , char *argv[])
     //Receive a message from client
     while((read_size = recv(client_sock , &requestType , sizeof(requestType) , 0)) > 0 )
     {
+        littleToBigEndianI(&requestType);
         if(requestType == SQRT_IN)
         {
             float number, result;
-            puts("SQUARE REQUEST");
+            puts("SQRT REQUEST");
             
             if((read_size = recv(client_sock , &number , sizeof(number) , 0)) > 0 )
             {
+                littleToBigEndianF(&number);
                 printf("Number: %f\n", number);
                 result = sqrt(number);
                 printf("Result: %f\n", result);
