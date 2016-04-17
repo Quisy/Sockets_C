@@ -3,14 +3,13 @@
 #include<sys/socket.h>    //socket
 #include<arpa/inet.h> //inet_addr
  
-#define SQUARE_OUT 1000
+#define SQRT_OUT 1000
 #define TIME_OUT 1002 
  
 int main(int argc , char *argv[])
 {
     int sock;
     struct sockaddr_in server;
-    char message[2000] , server_reply[2000];
     int requestType;
      
     //Create socket
@@ -46,6 +45,27 @@ int main(int argc , char *argv[])
             puts("Send failed");
             return 1;
         }
+         
+        if(requestType == SQRT_OUT)
+        {
+            float number, result;
+            puts("Number:");
+            scanf("%f", &number);
+            
+            if( send(sock , &number , sizeof(number) , 0) < 0)
+            {
+                puts("Send failed");
+                return 1;
+            }
+            
+            puts("SERVER MESSAGE: ");
+            if(recv(sock , &result , sizeof(result) , 0) < 0)
+        	{
+            	puts("recv failed");
+            	break;
+        	}
+            printf("Result: %f\n", result);
+        } 
          
         //Receive a reply from the server
         // if( recv(sock , server_reply , 2000 , 0) < 0)

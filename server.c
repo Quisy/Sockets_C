@@ -3,15 +3,15 @@
 #include<sys/socket.h>
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
+#include<math.h>
 
-#define SQUARE_IN 1000
+#define SQRT_IN 1000
 #define TIME_IN 1002
 
 int main(int argc , char *argv[])
 {
     int socket_desc , client_sock , c , read_size;
     struct sockaddr_in server , client;
-    char client_message[2000];
     const int backlog = 3;
     int requestType;
      
@@ -54,15 +54,28 @@ int main(int argc , char *argv[])
     puts("Connection accepted");
      
     //Receive a message from client
-    while( (read_size = recv(client_sock , &requestType , sizeof(requestType) , 0)) > 0 )
+    while((read_size = recv(client_sock , &requestType , sizeof(requestType) , 0)) > 0 )
     {
-        if(requestType == SQUARE_IN)
+        if(requestType == SQRT_IN)
         {
+            float number, result;
             puts("SQUARE REQUEST");
+            
+            if((read_size = recv(client_sock , &number , sizeof(number) , 0)) > 0 )
+            {
+                printf("Number: %f\n", number);
+                result = sqrt(number);
+                printf("Result: %f\n", result);
+                write(client_sock , &result , sizeof(result));
+            }
         }
         else if(requestType == TIME_IN)
         {
             puts("TIME REQUEST");
+        }
+        else
+        {
+            puts("UNKNOWN REQUEST");
         }
         //Send the message back to client
         //write(client_sock , client_message , strlen(client_message));
