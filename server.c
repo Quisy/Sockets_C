@@ -4,12 +4,16 @@
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
 
+#DEFINE SQUARE_IN 1000
+#DEFINE TIME_IN 1002
+
 int main(int argc , char *argv[])
 {
     int socket_desc , client_sock , c , read_size;
     struct sockaddr_in server , client;
     char client_message[2000];
     const int backlog = 3;
+    int requestType;
      
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -50,10 +54,18 @@ int main(int argc , char *argv[])
     puts("Connection accepted");
      
     //Receive a message from client
-    while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 )
+    while( (read_size = recv(client_sock , &requestType , sizeof(requestType) , 0)) > 0 )
     {
+        if(requestType == SQUARE_IN)
+        {
+            puts("SQUARE REQUEST");
+        }
+        else if(requestType == TIME_IN)
+        {
+            puts("TIME REQUEST");
+        }
         //Send the message back to client
-        write(client_sock , client_message , strlen(client_message));
+        //write(client_sock , client_message , strlen(client_message));
     }
      
     if(read_size == 0)
