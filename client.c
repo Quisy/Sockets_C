@@ -3,11 +3,15 @@
 #include<sys/socket.h>    //socket
 #include<arpa/inet.h> //inet_addr
  
+#define SQUARE_OUT 1000
+#define TIME_OUT 1002 
+ 
 int main(int argc , char *argv[])
 {
     int sock;
     struct sockaddr_in server;
     char message[2000] , server_reply[2000];
+    int requestType;
      
     //Create socket
     sock = socket(AF_INET , SOCK_STREAM , 0);
@@ -33,25 +37,25 @@ int main(int argc , char *argv[])
     //keep communicating with server
     while(1)
     {
-        printf("Enter message : ");
-        scanf("%s" , message);
+        printf("Request type: ");
+        scanf("%d", &requestType);
          
         //Send some data
-        if( send(sock , message , strlen(message) , 0) < 0)
+        if( send(sock , &requestType , sizeof(requestType) , 0) < 0)
         {
             puts("Send failed");
             return 1;
         }
          
         //Receive a reply from the server
-        if( recv(sock , server_reply , 2000 , 0) < 0)
-        {
-            puts("recv failed");
-            break;
-        }
+        // if( recv(sock , server_reply , 2000 , 0) < 0)
+        // {
+        //     puts("recv failed");
+        //     break;
+        // }
          
-        puts("Server reply :");
-        puts(server_reply);
+        //puts("Server reply :");
+        //puts(server_reply);
     }
      
     close(sock);

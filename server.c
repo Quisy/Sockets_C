@@ -4,8 +4,8 @@
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
 
-#DEFINE SQUARE_IN 1000
-#DEFINE TIME_IN 1002
+#define SQUARE_IN 1000
+#define TIME_IN 1002
 
 int main(int argc , char *argv[])
 {
