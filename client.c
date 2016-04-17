@@ -2,6 +2,7 @@
 #include<string.h>    //strlen
 #include<sys/socket.h>    //socket
 #include<arpa/inet.h> //inet_addr
+#include<stdlib.h>
  
 #define SQRT_OUT 1000
 #define TIME_OUT 1002 
@@ -66,7 +67,21 @@ int main(int argc , char *argv[])
         	}
             printf("Result: %f\n", result);
         } 
-         
+        else if(requestType = TIME_OUT)
+        {
+            char* time;
+            int size = 26;
+            time = malloc(sizeof(char)* size);
+            if(recv(sock , time , sizeof(char)*size , 0) < 0)
+        	{
+            	puts("recv failed");
+            	break;
+        	}
+            printf("Current Date and Time: %s\n", time);
+            puts(time);
+            free(time);
+            
+        }
         //Receive a reply from the server
         // if( recv(sock , server_reply , 2000 , 0) < 0)
         // {

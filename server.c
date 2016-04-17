@@ -4,6 +4,7 @@
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
 #include<math.h>
+#include<time.h>
 
 #define SQRT_IN 1000
 #define TIME_IN 1002
@@ -62,6 +63,34 @@ void littleToBigEndianF(float *val)
            printf("%d  %d\n",(int)new[k],(int)old[k]);
         }
     }
+}
+
+void littleToBigEndianS(char str[])
+{
+    if(checkEndian() == LITTLE_END)
+    {
+        char *s = str;
+        char temp;
+        
+        while(*s++ != '\0')
+        {
+            temp = *s;           
+        }
+                        
+    }
+}
+
+
+char* getCurrentDateTime()
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    static char timeStr[26];
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    strftime(timeStr, 26, "%Y:%m:%d %H:%M:%S", timeinfo);
+    return timeStr;
 }
 
 int main(int argc , char *argv[])
@@ -124,12 +153,17 @@ int main(int argc , char *argv[])
                 printf("Number: %f\n", number);
                 result = sqrt(number);
                 printf("Result: %f\n", result);
+                littleToBigEndianF(&result);
                 write(client_sock , &result , sizeof(result));
             }
         }
         else if(requestType == TIME_IN)
         {
             puts("TIME REQUEST");
+            char* time;
+            time = getCurrentDateTime();
+            printf ( "Current local time and date: %s\n", time);
+            write(client_sock , time , sizeof(char)* 26);
         }
         else
         {
