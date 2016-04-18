@@ -4,6 +4,9 @@
 #include<arpa/inet.h> //inet_addr
 #include<stdlib.h>
  
+#define SQRT_IN 2000
+#define TIME_IN 2002 
+ 
 #define SQRT_OUT 1000
 #define TIME_OUT 1002 
 
@@ -132,8 +135,16 @@ int main(int argc , char *argv[])
             puts("Send failed");
             return 1;
         }
+        
+        if(recv(sock , &requestType , sizeof(requestType) , 0) < 0)
+        {
+            puts("recv failed");
+            break;
+        }
          
-        if(requestType == SQRT_OUT)
+        endianConvertInt(&requestType); 
+         
+        if(requestType == SQRT_IN)
         {
             float number, result;
             puts("Number:");
@@ -157,7 +168,7 @@ int main(int argc , char *argv[])
             endianConvertFloat(&result);
             printf("Result: %f\n", result);
         } 
-        else if(requestType = TIME_OUT)
+        else if(requestType = TIME_IN)
         {
             char* time;
             int size = DATETIME_SIZE;

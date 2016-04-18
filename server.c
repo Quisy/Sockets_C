@@ -9,6 +9,10 @@
 #define SQRT_IN 1000
 #define TIME_IN 1002
 
+#define SQRT_OUT 2000
+#define TIME_OUT 2002
+
+
 #define BIG_END 1
 #define LITTLE_END 0
 
@@ -160,6 +164,10 @@ int main(int argc , char *argv[])
             float number, result;
             puts("SQRT REQUEST");
             
+            requestType = SQRT_OUT;
+            endianConvertInt(&requestType);
+            write(client_sock , &requestType , sizeof(requestType));
+            
             if((read_size = recv(client_sock , &number , sizeof(number) , 0)) > 0 )
             {
                 endianConvertFloat(&number);
@@ -171,8 +179,13 @@ int main(int argc , char *argv[])
             }
         }
         else if(requestType == TIME_IN)
-        {
+        {           
             puts("TIME REQUEST");
+            
+            requestType = TIME_OUT;
+            endianConvertInt(&requestType);
+            write(client_sock , &requestType , sizeof(requestType));
+            
             char* time;
             time = getCurrentDateTime();
             printf ( "Current local time and date: %s\n", time);
