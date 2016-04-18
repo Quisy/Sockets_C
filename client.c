@@ -7,7 +7,89 @@
 #define SQRT_OUT 1000
 #define TIME_OUT 1002 
 
+#define BIG_END 1
+#define LITTLE_END 0
+
 #define DATETIME_SIZE 19
+ 
+int checkEndian()
+{
+	int i = 1;
+	char *d = (char*)&i;
+
+	if(d[0] == 1)
+		return BIG_END;
+	else
+		return LITTLE_END;
+}
+
+void endianConvertInt(int *val)
+{
+    if(checkEndian() == LITTLE_END)
+    {
+        int i = 0, k=0;
+        int currentValTemp = *val;
+        char *old = (char*)&currentValTemp;
+        char *new = (char*)val;
+        
+        for(i; i<4; i++)
+        {
+           new[i] = old[3-i]; 
+        }
+        
+        for(k; k<4; k++)
+        {
+           printf("%d  %d\n",(int)new[k],(int)old[k]);
+        }
+    }
+}
+
+void endianConvertFloat(float *val)
+{
+    if(checkEndian() == LITTLE_END)
+    {
+        int i = 0, k=0;
+        int currentValTemp = *val;
+        char *old = (char*)&currentValTemp;
+        char *new = (char*)val;
+        
+        for(i; i<4; i++)
+        {
+           new[i] = old[3-i]; 
+        }
+        
+        for(k; k<4; k++)
+        {
+           printf("%d  %d\n",(int)new[k],(int)old[k]);
+        }
+    }
+}
+
+void endianConvertString(char str[])
+{
+    if(checkEndian() == LITTLE_END)
+    {
+        int size = DATETIME_SIZE;
+        int i = 0;
+        char *s = str;
+        char temp;
+        
+        
+        for(i; i<(size/2); i++)
+        {
+            temp = s[i];  
+            printf("%c   ",s[i]); 
+            s[i] = s[size - 1 - i];
+            printf("%c\n",s[i]); 
+            s[size - 1 - i] = temp;
+        }
+        // while(*s++ != '\0')
+        // {
+        //     temp = *s;           
+        // }
+        printf("%s\n",s);                
+    }
+}
  
 int main(int argc , char *argv[])
 {
@@ -42,6 +124,8 @@ int main(int argc , char *argv[])
         printf("Request type: ");
         scanf("%d", &requestType);
          
+        endianConvertInt(&requestType); 
+         
         //Send some data
         if( send(sock , &requestType , sizeof(requestType) , 0) < 0)
         {
@@ -55,6 +139,8 @@ int main(int argc , char *argv[])
             puts("Number:");
             scanf("%f", &number);
             
+            endianConvertFloat(&number);
+            
             if( send(sock , &number , sizeof(number) , 0) < 0)
             {
                 puts("Send failed");
@@ -67,6 +153,8 @@ int main(int argc , char *argv[])
             	puts("recv failed");
             	break;
         	}
+            
+            endianConvertFloat(&result);
             printf("Result: %f\n", result);
         } 
         else if(requestType = TIME_OUT)
@@ -79,6 +167,7 @@ int main(int argc , char *argv[])
             	puts("recv failed");
             	break;
         	}
+            endianConvertString(time);
             printf("Current Date and Time: %s\n", time);
             puts(time);
             free(time);

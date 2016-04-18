@@ -25,7 +25,7 @@ int checkEndian()
 		return LITTLE_END;
 }
 
-void littleToBigEndianI(int *val)
+void endianConvertInt(int *val)
 {
     if(checkEndian() == LITTLE_END)
     {
@@ -46,7 +46,7 @@ void littleToBigEndianI(int *val)
     }
 }
 
-void littleToBigEndianF(float *val)
+void endianConvertFloat(float *val)
 {
     if(checkEndian() == LITTLE_END)
     {
@@ -67,10 +67,10 @@ void littleToBigEndianF(float *val)
     }
 }
 
-void littleToBigEndianS(char str[])
+void endianConvertString(char str[])
 {
-    // if(checkEndian() == LITTLE_END)
-    // {
+    if(checkEndian() == LITTLE_END)
+    {
         int size = DATETIME_SIZE;
         int i = 0;
         char *s = str;
@@ -90,7 +90,7 @@ void littleToBigEndianS(char str[])
         //     temp = *s;           
         // }
         printf("%s\n",s);                
-    // }
+    }
 }
 
 
@@ -154,7 +154,7 @@ int main(int argc , char *argv[])
     //Receive a message from client
     while((read_size = recv(client_sock , &requestType , sizeof(requestType) , 0)) > 0 )
     {
-        littleToBigEndianI(&requestType);
+        endianConvertInt(&requestType);
         if(requestType == SQRT_IN)
         {
             float number, result;
@@ -162,11 +162,11 @@ int main(int argc , char *argv[])
             
             if((read_size = recv(client_sock , &number , sizeof(number) , 0)) > 0 )
             {
-                littleToBigEndianF(&number);
+                endianConvertFloat(&number);
                 printf("Number: %f\n", number);
                 result = sqrt(number);
                 printf("Result: %f\n", result);
-                littleToBigEndianF(&result);
+                endianConvertFloat(&result);
                 write(client_sock , &result , sizeof(result));
             }
         }
@@ -176,7 +176,7 @@ int main(int argc , char *argv[])
             char* time;
             time = getCurrentDateTime();
             printf ( "Current local time and date: %s\n", time);
-            littleToBigEndianS(time);
+            endianConvertString(time);
             write(client_sock , time , sizeof(char)* DATETIME_SIZE);
         }
         else
